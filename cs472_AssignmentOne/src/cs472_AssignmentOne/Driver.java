@@ -12,22 +12,48 @@ public class Driver {
 	
 
 	public static void main(String[] args) {
+		
+
+
 		RFormatClass rFormatClass = new RFormatClass();
 		
 		
+	
 		
-		rFormatClass.setOpcode((rFormatClass.getKnownInstruc1() & rFormatClass.getOpcodeChunk())>>>26);
-		
-		rFormatClass.isolateChunksR();
-		
-		if(rFormatClass.isRFormat()) {
+		for(int i = 0; i < rFormatClass.instrucArray.length; i++) {
+			rFormatClass.setOpcode((rFormatClass.getInstrucArray(i) & rFormatClass.getOpcodeChunk())>>>26);
 			
+
+
 			
-		}else {
+			if(rFormatClass.isRFormat()) {
+				//System.out.println(Integer.toHexString(rFormatClass.getKnownInstrucArray(i)));
+				//System.out.println(Integer.toHexString((rFormatClass.getKnownInstrucArray(i) & rFormatClass.getOpcodeChunk())>>>26));
+				
+				rFormatClass.isolateChunksR(i);
+				rFormatClass.whichFuncR();
+				rFormatClass.printResultR();
+				
+
+				
+				
+			}else {
+				//System.out.println(Integer.toHexString(rFormatClass.getKnownInstrucArray(i)));
+				//System.out.println(Integer.toHexString((rFormatClass.getKnownInstrucArray(i) & rFormatClass.getOpcodeChunk())>>>26));
 			
+				rFormatClass.isolateChunksI(i);
+				rFormatClass.whichFuncI();
+				rFormatClass.printResultI();
+
+				
+				
+			}
 			
+
+			rFormatClass.setAddress(((rFormatClass.getAddress() + 4)));
 			
 		}
+		
 		
 			
 	}

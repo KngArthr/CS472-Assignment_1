@@ -5,19 +5,28 @@ import java.util.Scanner;
 public class RFormatClass {
 	Scanner scan = new Scanner(System.in);
 
-
+	
 
 	int[] instrucArray = {0x032BA020, 0x8CE90014, 0x12A90003, 0x022DA822, 0xADB30020, 0x02697824, 0xAE8FFFF4, 0x018C6020, 0x02A4A825, 0x158FFFF7, 0x8ECDFFF0};
-	int[] knownInstrucArray = {0x00A63820, 0x8D070004, 0xAD0DFFFC};
-	int knownInstruc1 = 0x00A63820;
-	int address = 0x9A040;
+	//int[] knownInstrucArray = {0x00A63820, 0x8D070004, 0xAD0DFFFC};
 
-	
+	//Both format variables
 	int opcode;
 	int src1reg;
+	int funcInt;
+	String funcString;
+	int address = 0x9A040;
+	
+	//R format variables
+	
 	int src2reg;
 	int destreg;
-	int func;
+	
+	//I format variables
+	int srcdestreg;
+	short offset;
+	
+
 	
 	
 	//Both chunks
@@ -27,26 +36,15 @@ public class RFormatClass {
 	//R Chunks
 	int src2regChunk = 0b00000000000111110000000000000000;
 	int destregChunk = 0b00000000000000001111100000000000;
-	int functionChunk = 0b00000000000000001111100000111111;
+	int functionChunk = 0b00000000000000000000000000111111;
 	
 	//I chunks
 	int srcdestChunk = 0b00000000000111110000000000000000;
 	int offsetChunk = 0b00000000000000001111111111111111;
-		
-	public void doStuff() {
-		
-		
-		System.out.print("Original: ");
-		System.out.print("\t" + knownInstruc1);
-		System.out.println("\t" + Integer.toHexString(knownInstruc1));
-
-		destreg = knownInstruc1 >>> 7;
-		
-		System.out.print("Output: ");
-		System.out.print("\t" + destreg);
-		System.out.print("\t" + Integer.toHexString(destreg));
-		
-	}
+	
+	
+	
+	
 	
 	
 	public String scanInput(){
@@ -59,26 +57,98 @@ public class RFormatClass {
 		return "poop";
 	}
 	
-	public void printResult(int instruc, String func, int resultDest, int resultSrc, int resultSrc2){
-		System.out.print("Original: ");
-		System.out.println("\t" + instruc);
-		
-		System.out.print("Output: ");
-		System.out.print("\t" + func);
-		System.out.print("\t" + " $" + resultDest + ", $" + resultSrc + ", $" + resultSrc2);
+	public void whichFuncR() {
+		if(funcInt==0x20) {
+			funcString = "add";
+		}
+		if(funcInt==0x22) {
+			funcString = "sub";
+		}
+		if(funcInt==0x24) {
+			funcString = "and";
+		}
+		if(funcInt==0x25) {
+			funcString = "or";
+		}
 
-	}
-	public void isolateChunksR() {
 		
-		src1reg = (knownInstruc1 & src1regChunk)>>>21;
-		src2reg = (knownInstruc1 & src2regChunk)>>>16;
-		destreg = (knownInstruc1 & destregChunk)>>>11;
-		func = (knownInstruc1 & functionChunk);
+	}
+	public void whichFuncI() {
+
+		if(opcode==0x2a) {
+			funcString = "slt";
+		}
+		if(opcode==0x23) {
+			funcString = "lw";
+		}
+		if(opcode==0x2b) {
+			funcString = "sw";
+		}
+		if(opcode==0x4) {
+			funcString = "beq";
+		}
+		if(opcode==0x5) {
+			funcString = "bne";
+		}
+		
+	}
+	
+	public void printResultR(){
+		System.out.print(Integer.toHexString(address));
+		
+		System.out.print("\t");
+		System.out.print(funcString);
+		System.out.println(" $" + destreg + ", $" + src1reg + ", $" + src2reg);
 
 	}
 	
+	public void printResultI(){
+		System.out.print(Integer.toHexString(address));
+		
+		System.out.print("\t");
+		System.out.print(funcString);
+		System.out.println(" $" + srcdestreg + ", " + offset + " ($" + src1reg + ")");
+
+	}
+	public int getFuncInt() {
+		return funcInt;
+	}
+
+
+	public void setFuncInt(int funcInt) {
+		this.funcInt = funcInt;
+	}
+
+
+	public String getFuncString() {
+		return funcString;
+	}
+
+
+	public void setFuncString(String funcString) {
+		this.funcString = funcString;
+	}
+
+
+	public void isolateChunksR(int slot) {
+		
+		src1reg = (instrucArray[slot] & src1regChunk)>>>21;
+		src2reg = (instrucArray[slot] & src2regChunk)>>>16;
+		destreg = (instrucArray[slot] & destregChunk)>>>11;
+		funcInt = (instrucArray[slot] & functionChunk);
+
+	}
+	public void isolateChunksI(int slot) {
+		
+		src1reg = (instrucArray[slot] & src1regChunk)>>>21;
+		srcdestreg = (instrucArray[slot] & srcdestChunk)>>>16;
+		offset = (short) (instrucArray[slot] & offsetChunk);
+
+	}
+	
+	
 	public boolean isRFormat() {
-		if(opcodeChunk > 0) {
+		if(opcode > 0) {
 			return false;
 		}else {
 			return true;
@@ -86,8 +156,8 @@ public class RFormatClass {
 		
 	}
 	
-	public int[] getInstrucArray() {
-		return instrucArray;
+	public int getInstrucArray(int slot) {
+		return instrucArray[slot];
 	}
 
 
@@ -96,24 +166,14 @@ public class RFormatClass {
 	}
 
 
-	public int[] getKnownInstrucArray() {
-		return knownInstrucArray;
+	/*public int getKnownInstrucArray(int slot) {
+		return knownInstrucArray[slot];
 	}
 
 
 	public void setKnownInstrucArray(int[] knownInstrucArray) {
 		this.knownInstrucArray = knownInstrucArray;
-	}
-
-
-	public int getKnownInstruc1() {
-		return knownInstruc1;
-	}
-
-
-	public void setKnownInstruc1(int knownInstruc1) {
-		this.knownInstruc1 = knownInstruc1;
-	}
+	}*/
 
 
 	public int getAddress() {
@@ -166,14 +226,7 @@ public class RFormatClass {
 	}
 
 
-	public int getFunc() {
-		return func;
-	}
 
-
-	public void setFunc(int func) {
-		this.func = func;
-	}
 
 
 	public int getOpcodeChunk() {
