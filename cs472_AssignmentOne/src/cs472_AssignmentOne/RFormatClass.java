@@ -25,6 +25,7 @@ public class RFormatClass {
 	//I format variables
 	int srcdestreg;
 	short offset;
+	int branchpoop;
 	
 
 	
@@ -86,10 +87,40 @@ public class RFormatClass {
 		}
 		if(opcode==0x4) {
 			funcString = "beq";
+			branchI();
+			
 		}
 		if(opcode==0x5) {
 			funcString = "bne";
+			branchI();
+
+
 		}
+		
+	}
+	
+	public int getBranchpoop() {
+		return branchpoop;
+	}
+
+	public void setBranchpoop(int branchpoop) {
+		this.branchpoop = branchpoop;
+	}
+
+	public void branchI() {
+		
+		
+		branchpoop = address + 4 + (offset << 2);
+		
+		//beq
+		if(opcode==0x4) {
+			
+		}
+		//bne
+		if(opcode==0x5) {
+			
+		}
+		
 		
 	}
 	
@@ -103,11 +134,25 @@ public class RFormatClass {
 	}
 	
 	public void printResultI(){
-		System.out.print(Integer.toHexString(address));
 		
-		System.out.print("\t");
-		System.out.print(funcString);
-		System.out.println(" $" + srcdestreg + ", " + offset + " ($" + src1reg + ")");
+		if(opcode==0x4||opcode==0x5) {
+			System.out.print(Integer.toHexString(address));
+			
+			System.out.print("\t");
+			System.out.print(funcString);
+			System.out.println(" $" + srcdestreg + ", " + "address" + " " + Integer.toHexString(branchpoop));
+			
+		}else {
+			System.out.print(Integer.toHexString(address));
+			
+			System.out.print("\t");
+			System.out.print(funcString);
+			System.out.println(" $" + srcdestreg + ", " + offset + " ($" + src1reg + ")");
+			
+		}
+		
+		
+
 
 	}
 	public int getFuncInt() {
@@ -139,6 +184,8 @@ public class RFormatClass {
 
 	}
 	public void isolateChunksI(int slot) {
+		//branchpoop = 0x00;
+
 		
 		src1reg = (instrucArray[slot] & src1regChunk)>>>21;
 		srcdestreg = (instrucArray[slot] & srcdestChunk)>>>16;
