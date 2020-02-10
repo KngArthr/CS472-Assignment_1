@@ -7,7 +7,8 @@ public class RFormatClass {
 
 	
 
-	int[] instrucArray = {0x032BA020, 0x8CE90014, 0x12A90003, 0x022DA822, 0xADB30020, 0x02697824, 0xAE8FFFF4, 0x018C6020, 0x02A4A825, 0x158FFFF7, 0x8ECDFFF0};
+	//int[] instrucArray = {0x032BA020, 0x8CE90014, 0x12A90003, 0x022DA822, 0xADB30020, 0x02697824, 0xAE8FFFF4, 0x018C6020, 0x02A4A825, 0x158FFFF7, 0x8ECDFFF0};
+	//int[] instrucArrayTest = {0x0345EB22, 0x14950002, 0xafa7fffc, 0x8cd5000c, 0x01852820, 0x02653024};
 	//int[] knownInstrucArray = {0x00A63820, 0x8D070004, 0xAD0DFFFC};
 
 	//Both format variables
@@ -15,7 +16,8 @@ public class RFormatClass {
 	int src1reg;
 	int funcInt;
 	String funcString;
-	int address = 0x9A040;
+	//int address = 0x9A040;
+	int address = 0x7a060;
 	
 	//R format variables
 	
@@ -175,7 +177,7 @@ public class RFormatClass {
 	}
 
 
-	public void isolateChunksR(int slot) {
+	public void isolateChunksR(int slot, int[] instrucArray) {
 		
 		src1reg = (instrucArray[slot] & src1regChunk)>>>21;
 		src2reg = (instrucArray[slot] & src2regChunk)>>>16;
@@ -183,7 +185,7 @@ public class RFormatClass {
 		funcInt = (instrucArray[slot] & functionChunk);
 
 	}
-	public void isolateChunksI(int slot) {
+	public void isolateChunksI(int slot, int[] instrucArray) {
 		//branchpoop = 0x00;
 
 		
@@ -203,14 +205,14 @@ public class RFormatClass {
 		
 	}
 	
-	public int getInstrucArray(int slot) {
+	/*public int getInstrucArray(int slot) {
 		return instrucArray[slot];
 	}
 
 
 	public void setInstrucArray(int[] instrucArray) {
 		this.instrucArray = instrucArray;
-	}
+	}*/
 
 
 	/*public int getKnownInstrucArray(int slot) {
