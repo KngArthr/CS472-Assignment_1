@@ -140,7 +140,7 @@ public class RFormatClass {
 			
 			System.out.print("\t");
 			System.out.print(funcString);
-			System.out.println(" $" + srcdestreg + ", " + "address" + " " + Integer.toHexString(branchpoop));
+			System.out.println(" $" + srcdestreg + ", $" + src1reg + " address" + " " + Integer.toHexString(branchpoop));
 			
 		}else {
 			System.out.print(Integer.toHexString(address));
